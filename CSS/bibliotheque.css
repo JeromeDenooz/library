@@ -1,0 +1,38 @@
+#modalMedia {
+	width: 50%;
+	margin: auto;
+}
+
+#head {
+	height: 150px;
+	color: white;
+	margin-bottom: 10px;
+	position: relative;
+	overflow: hidden;
+}
+
+#head h1 {
+	position: relative;
+	z-index: 2;
+	margin-top: 60px;
+}
+
+#head img {
+	position: absolute;
+    top: 0;
+    width: 50%;
+    height: auto;
+    opacity: 0.7;
+}
+
+#imgBooks1 {
+	left: 0;
+}
+
+#imgBooks2 {
+	right: 0;
+}
+
+.coteMedia {
+	padding-top: 15px;
+}
