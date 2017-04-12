@@ -1,8 +1,3 @@
-#modalMedia {
-	width: 50%;
-	margin: auto;
-}
-
 #head {
 	height: 150px;
 	color: white;
@@ -35,4 +30,17 @@
 
 .coteMedia {
 	padding-top: 15px;
+}
+
+#mediaListDiv{
+	margin-top: 20px;
+}
+
+div#mediaListDiv > h4 {
+	display: none;
+}
+
+.modal {
+	width: 50%;
+	margin: auto;
 }

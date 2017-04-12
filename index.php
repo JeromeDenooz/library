@@ -36,10 +36,13 @@
       				</span>
 				</div>
 				<div>
-					<span><h3>Infos relatives à la recherche effectuée précédemment</h3></span>
+					<!-- <span><h3 class="text-center">Infos relatives à la recherche effectuée précédemment</h3></span> -->
+					<div id="mediaListDiv">
+						<h4 class="text-center">Résultats de l'affichage</h4>
+					</div>
 				</div>
 			</div>
-			<div class="col-md-2"><h3>Liste des x derniers medias ajoutés</h3>
+			<div class="col-md-2"><h3 class="text-center">Liste des x derniers medias ajoutés</h3>
 			</div>
 		</div>
 		<div class="modal" id="modalBook">
@@ -49,7 +52,7 @@
 					<h3 class="modal-title">Nouveau livre</h3>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal">
+					<form action="" class="form-horizontal" method="GET">
 						<div class="form-group">
 							<label for="titleBook" class="control-label col-sm-1">Titre</label>
 							<div class="col-sm-11">
@@ -134,10 +137,10 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group coteMedia"
-							<label for="evaluationBook" class="control-label col-sm-1">Cote du livre</label>
-							<div class="col-sm-11">
-								<div class="input-group col-sm-1">
+						<div class="form-group coteMedia">
+							<label for="evaluationBook" class="control-label col-sm-1">Cote</label>
+							<div class="col-sm-2">
+								<div class="input-group">
 									<input type="number" class="form-control" min="0" max="20" step="1" id="evaluationBook">
 									<span class="input-group-addon">/20</span>
 								</div>
@@ -153,7 +156,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-        			<button type="button" class="btn btn-primary">Enregistrer</button>
+        			<button type="button" class="btn btn-primary" id="saveBook">Enregistrer</button>
 				</div>
 			</div>
 		</div>
@@ -266,8 +269,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="modal" id="modalMusic">
+		<div class="modal" id="modalMusic">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
@@ -377,12 +379,36 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal" id="modalUpdateBook">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title">Modification d'un livre</h3>
+			</div>
+			<div class="modal-body">
+			<form action="" class="form-horizontal">
+				<div class="form-group">
+				<label for="titleBookUpdate" class="control-label col-sm-1">Titre</label>
+					<div class="col-sm-11">
+						<input type="text" class="form-control" placeholder="" id="titleBookUpdate">
+					</div>
+				</div>
+			</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+        		<button type="button" class="btn btn-primary" id="saveBookUpdate" data-book-id="">Sauvegarder</button>
+			</div>
+		</div>
+	</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="../bootstrap/js/bootstrap.min.js "></script>
 <script type="text/javascript">
 	$(function () {
 		var app=$('.container');
+
+		displayAllBook();
 
 		app.on('click', '.menuMedia a', function() {
 			var media = $(this).data('type');
@@ -404,6 +430,67 @@
 					alert('Média inconnu');
 			}
 		});
+
+		app.on('click', '#saveBook', function() {
+			$('#modalBook').modal('hide');
+			$.ajax({
+				method : "POST",
+				url : "add_book.php/livre",
+				data : {
+					titre : $('#titleBook').val(),
+					auteur : $('#authorBook').val(),
+					edition : $('#editionBook').val()
+				}
+			}).then(function(response) {
+				//console.log(response.id);
+			});
+			return false;
+		});
+
+		app.on('click', '.mediaLink', function(){
+			var titre = $(this).children('h4').text(),
+				bookId = $(this).data('book-id');
+
+			$('#titleBookUpdate').val(titre);
+			$('#saveBookUpdate').data('book-id', bookId);
+			$('#modalUpdateBook').modal('show');
+			console.log($('#saveBookUpdate').data('book-id'));
+			//console.log(bookId);
+			return false;
+		});
+
+		app.on('click', '#saveBookUpdate', function(){
+			$('#modalUpdateBook').modal('hide');
+			//updateBook();
+		});
 	});
+
+	function displayAllBook() {
+		$.ajax({
+			method : "GET",
+			url : "add_book.php/livre"
+		}).then(function(response) {
+			$('#mediaListDiv h4').show();
+			$.each(response, function(i, item) {
+				$('#mediaListDiv').append('<div class="list-group">' +
+					'<a href="" class="list-group-item mediaLink" data-book-id=' + response[i].id +
+					'><h4 class="list-grou-item-heading">' + response[i].titre + '</h4>' +
+					'<div class="list-grou-item">Auteur : ' + response[i].auteur + '</div>' +
+					'<div class="list-grou-item">Edition : ' + response[i].edition + '</div></div></a>');
+			});
+		});
+		return false;
+	}
+
+	function updateBook() {
+		$.ajax({
+			method : "PUT",
+			url : "add_book.php/livre",
+			data : {
+				id : $('#saveBookUpdate').data('book-id'),
+				titre : $('#titleBookUpdate').val()
+			}
+		});
+	}
 </script>
 </html>
