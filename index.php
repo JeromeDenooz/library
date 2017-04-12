@@ -378,26 +378,26 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="modal" id="modalUpdateBook">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-				<h3 class="modal-title">Modification d'un livre</h3>
-			</div>
-			<div class="modal-body">
-			<form action="" class="form-horizontal">
-				<div class="form-group">
-				<label for="titleBookUpdate" class="control-label col-sm-1">Titre</label>
-					<div class="col-sm-11">
-						<input type="text" class="form-control" placeholder="" id="titleBookUpdate">
-					</div>
+		<div class="modal" id="modalUpdateBook">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title">Modification d'un livre</h3>
 				</div>
-			</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-        		<button type="button" class="btn btn-primary" id="saveBookUpdate" data-book-id="">Sauvegarder</button>
+				<div class="modal-body">
+				<form action="" class="form-horizontal">
+					<div class="form-group">
+					<label for="titleBookUpdate" class="control-label col-sm-1">Titre</label>
+						<div class="col-sm-11">
+							<input type="text" class="form-control" placeholder="" id="titleBookUpdate">
+						</div>
+					</div>
+				</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+	        		<button type="button" class="btn btn-primary" id="saveBookUpdate" data-book-id="">Sauvegarder</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -455,13 +455,13 @@
 			$('#saveBookUpdate').data('book-id', bookId);
 			$('#modalUpdateBook').modal('show');
 			console.log($('#saveBookUpdate').data('book-id'));
-			//console.log(bookId);
 			return false;
 		});
 
 		app.on('click', '#saveBookUpdate', function(){
 			$('#modalUpdateBook').modal('hide');
-			//updateBook();
+			updateBook();
+			return false;
 		});
 	});
 
@@ -483,13 +483,23 @@
 	}
 
 	function updateBook() {
+		var id = $('#saveBookUpdate').data('book-id');
+
+		console.log("Début fonction");
 		$.ajax({
 			method : "PUT",
-			url : "add_book.php/livre",
+			url : "add_book.php/livre/" + id,
 			data : {
-				id : $('#saveBookUpdate').data('book-id'),
 				titre : $('#titleBookUpdate').val()
 			}
+		}).then(function(response){
+			$('#mediaListDiv > div').remove();
+			displayAllBook();
+			console.log("OK MA POULE!!!");
+		}).fail(function(){
+			console.log("Raté");
+		}).always(function(){
+			console.log("Requète terminée");
 		});
 	}
 </script>

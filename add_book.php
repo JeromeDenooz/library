@@ -1,11 +1,12 @@
 <?php
-//var_dump($_POST);
-//exit();
 header('Content-Type: application/json');
+$route = explode("/", $_SERVER['PATH_INFO']);
+//var_dump($route);
+//die();
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'POST' :
-		switch ($_SERVER['PATH_INFO']) {
-			case '/livre' :
+		switch ($route[1]) {
+			case 'livre' :
 				try {
 					$id = addABook($_POST['titre'], $_POST['auteur'], $_POST['edition']);
 				} catch (PDOException $e) {
@@ -17,8 +18,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		}
 		break;
 	case 'GET' :
-		switch ($_SERVER['PATH_INFO']) {
-			case '/livre' :
+		switch ($route[1]) {
+			case 'livre' :
 				try {
 					$response = getBooks();
 				} catch (PDOException $e) {
@@ -29,16 +30,18 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		}
 		break;
 	case 'PUT' :
-		switch ($_SERVER['PATH_INFO']) {
-			case '/livre' :
-				var_dump($_POST);
-				exit;
+		switch ($route[1]) {
+			case 'livre' :
+				//var_dump($_POST);
+				//exit;
 				try {
-					$response = getBooks();
+					parse_str(file_get_contents("php://input"),$post_vars);
+					$affected = updateBook($route[2], $post_vars['titre']);
 				} catch (PDOException $e) {
 					echo $e->getMessage();
 				}
-				echo json_encode($response);
+				echo json_encode(["result"=>$affected]);
+				//echo json_encode($response);
 				break;
 		}
 		break;
@@ -81,7 +84,13 @@ function getBooks() {
 	return $bookList;
 };
 
-function updateBook($id) {
+function updateBook($id, $titre) {
+	$db = new PDO('mysql:host=localhost;dbname=bibliotheque', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+	try {
+		$query = $db->exec("UPDATE livre SET titre='$titre' WHERE id=$id;");
+	} catch (PDOException $e) {
+		echo $e->getMessage();
+	}
 };
 
 /*
